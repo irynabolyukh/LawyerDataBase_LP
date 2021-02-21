@@ -176,21 +176,41 @@ task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
 % Запити з "діленням"
 %%%%%%%%%%%%%%%%%%%%Iryna%%%%%%%%%%%%%%%%%%%%%%%%
 % Запит № 6 Знайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає заданий адвоката.
-task06(LastName,FirstName,Lawyers) :- setof((LastNameRes,FirstNameRes),atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
-
-atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
+task06(LastName,FirstName,Lawyers) :-
+             setof((LastNameRes,FirstNameRes),
+             atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+%адвокат, що надає хоч одну ж таку послугу, що і заданий адвокат
+atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
+                        lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
                         lawyerService(LKS,SKS), lawyerService(LK,SKS),
                         LK \= LKS, lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_).
 
 %%%%%%%%%%%%%%%%%%%Iryna%%%%%%%%%%%%%%%%%%%%%%%%%
-% Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки послуги заданого адвоката і ніякі інші.
-
+% Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки
+% послуги(хоча б одну) заданого адвоката і ніякі інші.
+%task07(LastName,FirstName,Lawyers):-
+ %              setof((LastNameRes,FirstNameRes),
+   %            onlySameServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+%послуги, які не надає заданий адвокат
+%notLServices(LastName,FirstName,SK):-
+  %  lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
+  %  not(lawyerService(LKS,SK)).
+% адвокат, який надає хоч одну послугу, що й заданий адвокат і не надає
+% жодної послуги, яку б не надавав заданий адвокат
+% onlySameServices(LastName,FirstName,LastNameRes,FirstNameRes):-
+% atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
+   %            not(badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes)).
+%адвокат, який надає хоч одну послугу, яку не надає заданий адвокат
+%badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes):-
+    %                 lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
+     %                lawyerService(LK,SK),
+     %                notLServices(LastName,FirstName,SK).
 
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
 % і можуть надавати ще якісь, які не надає цей адвокат.
-task08(LastName,FirstName,Lawyers) :- setof((LastNameRes,FirstNameRes),onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
-onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes) :- atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes), not(badLawyers(LastName,FirstName,LastNameRes,FirstNameRes)).
-badLawyers(LastName,FirstName,LastNameRes,FirstNameRes) :-
+task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes):- atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes), not(badLawyers(LastName,FirstName,LastNameRes,FirstNameRes)).
+badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
                      lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
                      lawyerService(LKS,SK),
                      lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
@@ -243,8 +263,8 @@ badLawyers(LastName,FirstName,LastNameRes,FirstNameRes) :-
 % 8 Запит
 :- write("Запит 8 ."), writeln("Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,"),
 	writeln("і можуть надавати ще якісь, які не надає цей адвокат.").
-:- writeln("Бажаний результат:").
-% :- task05(R), write("Отримали: \t\t\t"),writeln(R), nl.
+:- writeln("Бажаний результат: (gurin, vladyslav),  (shulga, mykhailo)").
+:- task08(mytko,grigoriy,R), write("Отримали: \t\t\t"),writeln(R), nl.
 
 % 8 Запит
 :- write("Запит 9 ."), writeln("Знайти адвокатів (прізвище та ім’я), які надають в точності такі самі послуги як послуги заданого адвоката.").
