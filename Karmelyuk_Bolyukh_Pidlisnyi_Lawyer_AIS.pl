@@ -188,23 +188,22 @@ atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
 %%%%%%%%%%%%%%%%%%%Iryna%%%%%%%%%%%%%%%%%%%%%%%%%
 % Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки
 % послуги(хоча б одну) заданого адвоката і ніякі інші.
-%task07(LastName,FirstName,Lawyers):-
- %              setof((LastNameRes,FirstNameRes),
-   %            onlySameServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
-%послуги, які не надає заданий адвокат
-%notLServices(LastName,FirstName,SK):-
-  %  lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
-  %  not(lawyerService(LKS,SK)).
-% адвокат, який надає хоч одну послугу, що й заданий адвокат і не надає
-% жодної послуги, яку б не надавав заданий адвокат
-% onlySameServices(LastName,FirstName,LastNameRes,FirstNameRes):-
-% atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
-   %            not(badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes)).
-%адвокат, який надає хоч одну послугу, яку не надає заданий адвокат
-%badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes):-
-    %                 lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
-     %                lawyerService(LK,SK),
-     %                notLServices(LastName,FirstName,SK).
+task07(LastName,FirstName,Lawyers) :-
+             setof((LastNameRes,FirstNameRes),
+             onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+% адвокат, що надає хоч одну послугу заданого адвоката і не надає жодної
+% такої послуги, яку б не надавав заданий адвокат
+onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes):-
+    atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
+    lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
+    notLServices(LastName,FirstName,ServiceCode),
+    not(lawyerService(LK,ServiceCode)).
+% послуги, які не надає даний адвокат
+notLServices(LastName,FirstName,ServiceCode):-
+    lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
+    not(lawyerService(LKS,ServiceCode)),
+    service(ServiceCode,_,_).
+
 
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
 % і можуть надавати ще якісь, які не надає цей адвокат.
