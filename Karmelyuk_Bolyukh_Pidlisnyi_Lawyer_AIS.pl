@@ -195,14 +195,17 @@ task07(LastName,FirstName,Lawyers) :-
 % такої послуги, яку б не надавав заданий адвокат
 onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes):-
     atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
+    not(badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes)).
+% адвокати, які надають послуги, що не надає заданий адвокат
+badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes) :-
     lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
     notLServices(LastName,FirstName,ServiceCode),
-    not(lawyerService(LK,ServiceCode)).
+    lawyerService(LK,ServiceCode).
 % послуги, які не надає даний адвокат
 notLServices(LastName,FirstName,ServiceCode):-
     lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
-    not(lawyerService(LKS,ServiceCode)),
-    service(ServiceCode,_,_).
+    service(ServiceCode,_,_),
+    not(lawyerService(LKS,ServiceCode)).
 
 
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
@@ -256,8 +259,8 @@ badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
 
 % 7 Запит
 :- write("Запит 7 ."), writeln("Знайти адвокатів (прізвище та ім’я), які надають тільки послуги заданого адвоката і ніякі інші.").
-:- writeln("Бажаний результат:").
-% :- task05(R), write("Отримали: \t\t\t"),writeln(R), nl.
+:- writeln("Бажаний результат:  (gudko, kostiantyn),  (mytko, grigoriy)").
+:- task07(gurin,vladyslav,R), write("Отримали: \t\t\t"),writeln(R), nl.
 
 % 8 Запит
 :- write("Запит 8 ."), writeln("Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,"),
