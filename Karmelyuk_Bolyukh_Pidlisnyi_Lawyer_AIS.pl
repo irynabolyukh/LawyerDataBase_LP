@@ -24,13 +24,13 @@ service(3005,"стягнення моральної та матеріально�
 
 % Досьє(Код Досьє, Статус(Відкрита / Закрита), Дата-відкриття, Дата-закриття, Оплачено(True|False), Код Клієнта)
 dossier(50001,zakryta,open_date(11,mar,2019),close_date(31,jun,2019),true,100).
-dossier(50002,vydkryta,open_date(16,aug,2019),vydkryta,false,100).
+dossier(50002,vidkryta,open_date(16,aug,2019),vidkryta,false,100).
 
 dossier(50003,zakryta,open_date(16,feb,2018),close_date(15,feb,2019),true,101).
 
 dossier(50004,zakryta,open_date(16,sep,2017),close_date(9,oct,2017),true,102).
 dossier(50005,zakryta,open_date(21,feb,2018),close_date(15,mar,2018),true,102).
-dossier(50006,vydkryta,open_date(14,oct,2020),vydkryta,false,102).
+dossier(50006,vidkryta,open_date(14,oct,2020),vidkryta,false,102).
 
 dossier(50007,zakryta,open_date(14,jan,2021),close_date(18,feb,2021),false,103).
 
@@ -125,8 +125,9 @@ task01(Year,ServiceName,Total):-get_total_apps(Year,ServiceCode,TotalApps), serv
 % Загальна кількість записів на задану послугу за конкретний рік
 get_total_apps(Year,ServiceCode,Total):-findall(ApK,getApps(Year,ServiceCode,ApK),ListApKs), length(ListApKs,Total).
 
-% Повертає true, якщо існує запис, що відбувся в конкретному році на задану послугу.
-getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,_,_), appointmentService(ApK, ServiceCode).
+% Повертає true, якщо існує запис, що відбувся в конкретному році на
+% задану послугу і якщо було вже оплачено(дивитися в Досьє справи).
+getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,DK,_), appointmentService(ApK, ServiceCode), dossier(DK,_,_,_,true,_).
 
 
 
@@ -301,12 +302,12 @@ helperOp(Client,Service,Lawyer):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1 Запит
 :- write("Запит 1 ."), writeln("Порахувати прибуток бюро за 2018 за відстрочення виплати кредиту").
-:- writeln("Бажаний результат:   3400").
+:- writeln("Бажаний результат:   8500").
 :- task01(2018,"відстрочення виплати кредиту",R), write("Отримали: \t\t      "),writeln(R), nl.
 
 % 2 Запит
 :- write("Запит 2:"), writeln("\nДля кожного адвоката порахувати кількість записів клієнтів до нього, які були здійснені протягом останніх двох років.").
-:- writeln("Бажаний результат: [(ignatenko, 3),  (gurin, 4),  (mytko, 2)].").
+:- writeln("Бажаний результат:  [(ignatenko,2),(gurin,2),(mytko,1),(shulga,1),(kachan,2),(gudko,1),(savruk,1)]").
 :- task02(R), write("Отримали: \t\t"),writeln(R), nl.
 
 % 3 Запит
