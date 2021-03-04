@@ -120,14 +120,35 @@ total_amount([KEY|Rest],Suma,AMOUNT_FUNCTION):- call(AMOUNT_FUNCTION,KEY,CURRENT
 
 % Запит № 1
 % Порахувати прибуток бюро за вказаний рік за вказану послугу(у записах є дата, записи пов'язані з послугами, у послуг є дата)
-task01(Year,ServiceName,Total):-get_total_apps(Year,ServiceCode,TotalApps), service(ServiceCode,ServiceName,Price), Total is TotalApps*Price.
+% а)якщо предикат має вигляд task01(+Year,+ServiceName,-Total), то запит
+% буде мати вигляд: task01(2018,"написання позовної заяви",T). Це виведе
+% прибуток досьє за вказану послугу і заданий рік. T = 2000.
+% б)якщо предикат має вигляд task01(+Year,-ServiceName,+Total), то запит
+% буде мати вигляд: task01(2018,P,2000). Це виведе назви послуг, за які
+% було отримано вказаний прибуток за конкретний рік. P = "написання позовної заяви" ;
+% в)якщо предикат має вигляд task01(+Year,-ServiceName,-Total), то запит
+% буде мати вигляд task01(2018,P,T). Виведе пари з назвами усіх існуючих
+% послуг та прибутком за них за вказаний рік.
+% P = "відстрочення виплати кредиту",T = 3400 ;
+% P = "зменшення ставок по кредиту",T = 0 ;
+% P = "участь у допиті свідків, підозрюваних, обвинувачених",T = 5400 ;
+% P = "написання позовної заяви",T = 2000 ;
+% P = "стягнення моральної та матеріальної шкоди",T = 0.
+% г) предикат task01(-Year,+ServiceName,-Total), запит task01(Y,"написання позовної
+% заяви",T). виведе прибуток за дану послугу за всі роки роботи бюро разом T = 5000.
+task01(Year,ServiceName,Total):-
+    service(ServiceCode,ServiceName,Price),
+    get_total_apps(Year,ServiceCode,TotalApps),
+    Total is TotalApps*Price.
 
 % Загальна кількість записів на задану послугу за конкретний рік
 get_total_apps(Year,ServiceCode,Total):-findall(ApK,getApps(Year,ServiceCode,ApK),ListApKs), length(ListApKs,Total).
 
 % Повертає true, якщо існує запис, що відбувся в конкретному році на
 % задану послугу і якщо було вже оплачено(дивитися в Досьє справи).
-getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,DK,_), appointmentService(ApK, ServiceCode), dossier(DK,_,_,_,true,_).
+getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,DK,_),
+                               dossier(DK,_,_,_,true,_),
+                               appointmentService(ApK, ServiceCode).
 
 
 
@@ -187,7 +208,6 @@ task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
 
 % Запити з "діленням"
 % Запит № 6 Знайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає заданий адвоката.
-
 task06(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
@@ -202,7 +222,6 @@ atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
 
 % Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки
 % послуги(хоча б одну) заданого адвоката і ніякі інші.
-
 task07(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
@@ -228,14 +247,16 @@ notLServices(LastName,FirstName,ServiceCode):-
 
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
 % і можуть надавати ще якісь, які не надає цей адвокат.
-
 task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
-						onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+                                     onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
+% адвокати,що надають усі ті послуги, що і заданий адвокат і можуть
+% надавати ще якісь, які не надає цей адвокат
 onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes):-
 						atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
 						not(badLawyers(LastName,FirstName,LastNameRes,FirstNameRes)).
 
+% адвокати, що не надають послуги, які надає заданий адвокат
 badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
                      lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
                      lawyerService(LKS,SK),
@@ -302,7 +323,7 @@ helperOp(Client,Service,Lawyer):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1 Запит
 :- write("Запит 1 ."), writeln("Порахувати прибуток бюро за 2018 за відстрочення виплати кредиту").
-:- writeln("Бажаний результат:   8500").
+:- writeln("Бажаний результат:   3400").
 :- task01(2018,"відстрочення виплати кредиту",R), write("Отримали: \t\t      "),writeln(R), nl.
 
 % 2 Запит
