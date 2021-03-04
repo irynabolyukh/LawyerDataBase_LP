@@ -128,14 +128,17 @@ total_amount([KEY|Rest],Suma,AMOUNT_FUNCTION):- call(AMOUNT_FUNCTION,KEY,CURRENT
 % було отримано вказаний прибуток за конкретний рік. P = "написання позовної заяви" ;
 % в)якщо предикат має вигляд task01(+Year,-ServiceName,-Total), то запит
 % буде мати вигляд task01(2018,P,T). Виведе пари з назвами усіх існуючих
-% послуг та прибутком за них за вказаний рік. P = "відстрочення виплати
-% кредиту",T = 3400 ; P = "зменшення ставок по кредиту",T = 0 ; P =
-% "участь у допиті свідків, підозрюваних, обвинувачених",T = 5400 ; P =
-% "написання позовної заяви",T = 2000 ; P = "стягнення моральної та
-% матеріальної шкоди",T = 0. г) предикат
-% task01(-Year,+ServiceName,-Total), запит task01(Y,"написання позовної
-% заяви",T). виведе прибуток за дану послугу за всі роки роботи бюро
-% разом T = 5000.
+% послуг та прибутком за них за вказаний рік.
+% P = "відстрочення виплати кредиту",T = 3400 ;
+% P = "зменшення ставок по кредиту",T = 0 ;
+% P = "участь у допиті свідків, підозрюваних, обвинувачених",T = 5400 ;
+% P = "написання позовної заяви",T = 2000 ;
+% P = "стягнення моральної та матеріальної шкоди",T = 0.
+% г)предикат task01(-Year,+ServiceName,-Total), запит task01(Y,"написання позовної
+% заяви",T). виведе прибуток за дану послугу за всі роки роботи бюро разом T = 5000.
+% д)предикат task01(+Year,+ServiceName,+Total), запит
+% task01(2018,"написання позовної заяви",2000). повертає true, оскільки
+% дійсно за вказаний рік і задану послугу було отримано даний прибуток.
 task01(Year,ServiceName,Total):-
     service(ServiceCode,ServiceName,Price),
     get_total_apps(Year,ServiceCode,TotalApps),
@@ -206,8 +209,15 @@ task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
 				AGE is TOTAL_AGE / AGE_AMOUNT.
 
 
+
 % Запити з "діленням"
 % Запит № 6 Знайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає заданий адвоката.
+% предикат task06(?LastName,?FirstName,?Lawyers). буде працювати з
+% будь-якими типами параметрів.
+% для прикладу, запит task06(LastName,Name,[(gurin, vladyslav),
+% (ignatenko, igor), (kachan, artem), (shulga, mykhailo)]). виведе
+% прізвища та імена адвокатів і з якими у заданих Lawyers є
+% хоч одна спільна послуга: LastName = mytko, Name = grigoriy;
 task06(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
@@ -220,8 +230,15 @@ atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
                         LK \= LKS,
 						lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_).
 
+
+
 % Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки
 % послуги(хоча б одну) заданого адвоката і ніякі інші.
+% предикат task07(?LastName,?FirstName,?Lawyers). буде працювати з
+% будь-якими типами параметрів.
+% для прикладу, запит task07(gurin,vladyslav,R). виведе
+% список адвокатів, які надають тільки ті послуги(хоча б одну), що і
+% gurin vladyslav і ніякі інші.
 task07(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
@@ -245,8 +262,17 @@ notLServices(LastName,FirstName,ServiceCode):-
     not(lawyerService(LKS,ServiceCode)).
 
 
+
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
 % і можуть надавати ще якісь, які не надає цей адвокат.
+% предикат task08(?LastName,?FirstName,?Lawyers). буде працювати з
+% будь-якими типами параметрів.
+% для прикладу, запит task08(LastName,FirstName,R). виведе імена та
+% прізвища усіх адвокатів разом зі спиками тих адвокатів, що
+% надають усі ті послуги, що і виведений адвокат і можуть надавати ще
+% якісь, які не надає цей адвокат:
+% LastName = gudko,FirstName = kostiantyn,R = [(gurin, vladyslav), (savruk, solomiya)] ;
+% LastName = ignatenko,FirstName = igor,R = [(kachan, artem)] ; і так далі
 task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
                                      onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
