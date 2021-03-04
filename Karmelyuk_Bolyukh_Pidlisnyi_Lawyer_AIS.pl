@@ -83,7 +83,7 @@ lawyerService(204,3005).
 lawyerService(205,3001).
 lawyerService(205,3004).
 lawyerService(205,3005).
-	
+
 lawyerService(206,3001).
 lawyerService(206,3002).
 
@@ -205,19 +205,19 @@ atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
 task07(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
-			 
+
 % адвокат, що надає хоч одну послугу заданого адвоката і не надає жодної
 % такої послуги, яку б не надавав заданий адвокат
 onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes):-
     atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
     not(badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes)).
-	
+
 % адвокати, які надають послуги, що не надає заданий адвокат
 badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes) :-
     lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
     notLServices(LastName,FirstName,ServiceCode),
     lawyerService(LK,ServiceCode).
-	
+
 % послуги, які не надає даний адвокат
 notLServices(LastName,FirstName,ServiceCode):-
     lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
@@ -231,10 +231,10 @@ notLServices(LastName,FirstName,ServiceCode):-
 task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
 						onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
-onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes):- 
+onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes):-
 						atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
 						not(badLawyers(LastName,FirstName,LastNameRes,FirstNameRes)).
-						
+
 badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
                      lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
                      lawyerService(LKS,SK),
@@ -254,13 +254,13 @@ badLawyers1(LastName,LastName2):-
 				lawyer(LKS1,pib(LastName,_,_),_,_,_),
 				not(lawyerService(LKS1,SKS)).
 
-onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes):- 
+onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes):-
 					lawyer(LKS,pib(LastName,FirstName,_),_,_,_),!,
 					lawyerService(LKS,SKS),
-					lawyer(LKS2,pib(LastNameRes,FirstNameRes,_),_,_,_), 
-					LastName \= LastNameRes, 
+					lawyer(LKS2,pib(LastNameRes,FirstNameRes,_),_,_,_),
+					LastName \= LastNameRes,
 					lawyerService(LKS2,SKS),
-					not(task09_helper(LastName,LastNameRes)), 
+					not(task09_helper(LastName,LastNameRes)),
 					not(badLawyers1(LastName,LastNameRes)).
 
 task09_helper(LastName,LastName2):-
@@ -278,18 +278,18 @@ is_registered_on(Client,Service):-
 						appointment(AId,_,_,_,DId,_),
 						service(SId,Service,_),
 						appointmentService(AId,SId),!.
-						
+
 
 % надає_адвокат
 :-op(300,xfy,is_provided_by).
 is_provided_by(Service,Lawyer):-
 				service(SId,Service,_),
 				lawyer(LId, Lawyer,_,_,_),
-				lawyerService(LId,SId),!. 
-				
+				lawyerService(LId,SId),!.
+
 
 Clients is_registered_on Service is_provided_by Lawyer:-setof(Client,helperOp(Client,Service,Lawyer),Clients).
-helperOp(Client,Service,Lawyer):- 
+helperOp(Client,Service,Lawyer):-
 				client(CId,Client,_,_,_),
 				dossier(DId,_,_,_,_,CId),
 				lawyer(LId, Lawyer,_,_,_),
