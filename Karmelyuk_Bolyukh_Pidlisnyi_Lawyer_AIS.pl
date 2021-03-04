@@ -5,8 +5,7 @@ client(101, pib(avramenko, volodymir, petrovych), birthday(22,jun,1995), address
 client(102, pib(yaskova, yana, oleksandrivna), birthday(6,sep,1985), address(kyiv,vasylkivska,03150,index),[0951871551,0504351221]).
 client(103, pib(kryukova, nina, ivanovna), birthday(25,feb,2000), address(kyiv,tolstogo,14,02000),[0951342551,0504352291]).
 
-% адвокат(Код адвоката, ПІБ, Спеціалізація, Номера телефонів (від 1 до
-% 2), Робочі дні[1..7])
+% адвокат(Код адвоката, ПІБ, Спеціалізація, Номера телефонів (від 1 до 2), Робочі дні)
 lawyer(201, pib(ignatenko,igor,oleksandrovych),"уголовні справи",[0957655414,0502747192],[pn,vt,cht,pt]).
 lawyer(202, pib(gurin,vladyslav,olegovych),"адміністративні справи",[0976543421],[pn,sr,pt]).
 lawyer(203, pib(mytko,grigoriy,vladyslavovych),"IT, аутсорсінг",[0956644511,0675312322],[vt,cht,sb]).
@@ -35,31 +34,32 @@ dossier(50006,vydkryta,open_date(14,oct,2020),vydkryta,false,102).
 
 dossier(50007,zakryta,open_date(14,jan,2021),close_date(18,feb,2021),false,103).
 
-% запис(Код Запису, Дата-Запису, Час-Запису, Код Адвоката, Код Досьє)
-appointment(400001,app_date(13,mar,2019),app_time(12:00),201,50001).
-appointment(400002,app_date(25,jun,2019),app_time(15:00),201,50001).
+% запис(Код Запису, Дата-Запису, Час-Запису, Код Адвоката, Код Досьє, Послуги)
+% Послуги - зв'язок м до н до Послуг
 
-appointment(400003,app_date(18,aug,2019),app_time(9:45),202,50002).
-appointment(400004,app_date(23,sep,2019),app_time(18:00),201,50002).
-appointment(400005,app_date(9,dec,2019),app_time(11:30),203,50002).
+appointment(400001,app_date(13,mar,2019),app_time(12:00),201,50001,[3004,3005]).
+appointment(400002,app_date(25,jun,2019),app_time(15:00),201,50001,[3004]).
 
-appointment(400006,app_date(21,feb,2018),app_time(13:30),203,50003).
-appointment(400007,app_date(27,feb,2018),app_time(9:30),203,50003).
-appointment(400008,app_date(31,mar,2018),app_time(14:30),202,50003).
-appointment(400009,app_date(11,feb,2019),app_time(13:45),202,50003).
+appointment(400003,app_date(18,aug,2019),app_time(9:45),202,50002,[3001]).
+appointment(400004,app_date(23,sep,2019),app_time(18:00),201,50002,[3005]).
+appointment(400005,app_date(9,dec,2019),app_time(11:30),205,50002,[3004]).
 
+appointment(400006,app_date(21,feb,2018),app_time(13:30),203,50003,[3003]).
+appointment(400007,app_date(27,feb,2018),app_time(9:30),203,50003,[3004]).
+appointment(400008,app_date(31,mar,2018),app_time(14:30),206,50003,[3001]).
+appointment(400009,app_date(11,feb,2019),app_time(13:45),202,50003,[3003,3004]).
 
-appointment(400010,app_date(1,oct,2017),app_time(9:45),201,50004).
+appointment(400010,app_date(1,oct,2017),app_time(9:45),201,50004,[3001]).
 
-appointment(400011,app_date(23,feb,2018),app_time(10:45),201,50005).
-appointment(400012,app_date(11,mar,2018),app_time(13:15),203,50005).
+appointment(400011,app_date(23,feb,2018),app_time(10:45),201,50005,[3001,3004]).
+appointment(400012,app_date(11,mar,2018),app_time(13:15),203,50005,[3003]).
 
-appointment(400013,app_date(16,oct,2020),app_time(16:15),203,50006).
-appointment(400014,app_date(21,nov,2020),app_time(16:00),203,50006).
-appointment(400015,app_date(11,feb,2021),app_time(12:15),202,50006).
+appointment(400013,app_date(16,oct,2020),app_time(16:15),204,50006,[3004,3005]).
+appointment(400014,app_date(21,nov,2020),app_time(16:00),203,50006,[3003,3004]).
+appointment(400015,app_date(11,feb,2021),app_time(12:15),207,50006,[3002]).
 
-appointment(400016,app_date(21,jan,2021),app_time(9:15),202,50007).
-appointment(400017,app_date(11,feb,2021),app_time(12:45),201,50007).
+appointment(400016,app_date(21,jan,2021),app_time(9:15),205,50007,[3001,3004]).
+appointment(400017,app_date(11,feb,2021),app_time(12:45),206,50007,[3001]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Звязки%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % адвокат-послуга(Код Адвоката, Код Послуги)
@@ -72,12 +72,13 @@ lawyerService(202,3002).
 lawyerService(202,3003).
 lawyerService(202,3004).
 
-lawyerService(203,3004).
 lawyerService(203,3003).
+lawyerService(203,3004).
 
 lawyerService(204,3003).
 lawyerService(204,3004).
 lawyerService(204,3005).
+
 
 lawyerService(205,3001).
 lawyerService(205,3004).
@@ -89,17 +90,11 @@ lawyerService(206,3002).
 lawyerService(207,3001).
 lawyerService(207,3002).
 
-% запис-послуга (Код Запису, Код Послуги)
-appointmentService(400010,3001).
 
-appointmentService(400006,3001).
-
-appointmentService(400007,3001).
-
-%appointmentService(400006,3002).
-
-
+% позначає зв'язок, для зручного користування
+appointmentService(AK, SK) :- appointment(AK,_,_,_,_,SERVICES), member(SK, SERVICES), !.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Додаткові предикати%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %Отримати теперешній рік
 year(Year) :-
@@ -122,17 +117,17 @@ total_amount([KEY|Rest],Suma,AMOUNT_FUNCTION):- call(AMOUNT_FUNCTION,KEY,CURRENT
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%запити%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Запит № 1
-%%%%%%%%%%%%%%%%%%%%Iryna%%%%%%%%%%%%%%%%%%%%%%%%
 % Порахувати прибуток бюро за вказаний рік за вказану послугу(у записах є дата, записи пов'язані з послугами, у послуг є дата)
-% task01(+Year,+ServiceName,-Total)
 task01(Year,ServiceName,Total):-get_total_apps(Year,ServiceCode,TotalApps), service(ServiceCode,ServiceName,Price), Total is TotalApps*Price.
 
 % Загальна кількість записів на задану послугу за конкретний рік
 get_total_apps(Year,ServiceCode,Total):-findall(ApK,getApps(Year,ServiceCode,ApK),ListApKs), length(ListApKs,Total).
 
 % Повертає true, якщо існує запис, що відбувся в конкретному році на задану послугу.
-getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,_), appointmentService(ApK, ServiceCode).
+getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,_,_), appointmentService(ApK, ServiceCode).
+
 
 
 % Запит № 2
@@ -140,26 +135,29 @@ getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,_), appoin
 %task02(-Pairs)
 task02(Pairs):-findall((LastName,Total),task02_helper(LastName, Total),Pairs).
 task02_helper(LastName,Total):-lawyer(IdL,pib(LastName,_,_),_,_,_),year(CurrYear), LastTwo is CurrYear - 2,get_total_cases(LastTwo,IdL,Total).
+
 % Загальна кількість справ до заданого адвоката з датами проведення запису більшою або рівною за задану
 get_total_cases(Year,LayerCode,Total):-setof(DCode,getCases(Year,LayerCode,DCode),ListCases), length(ListCases,Total).
+
 % Повертає всі коди справ адвоката з датою проведення запису більшою або рівною за задану
-getCases(Year,LCode,DCode):-appointment(_,app_date(_,_,YearA),_,LCode,DCode), YearA >= Year, dossier(DCode,_,_,_,_,_).
+getCases(Year,LCode,DCode):-appointment(_,app_date(_,_,YearA),_,LCode,DCode,_), YearA >= Year, dossier(DCode,_,_,_,_,_).
 
 % Запит № 3
 % Знайти клієнтів, які в період з РІК1 по РІК2 звертались за послугою з відстрочення виплати кредиту
 % та ніколи не звертались за послугою зменшення ставок по кредиту
-% task03(+RIK1,+RIK2,-CLIENTS)
+
+
 
 %Повертає true, якщо клієнт звертався за послугою з відстрочення виплати кредиту в період з РІК1 по РІК2
-task03_helper_1(RIK1,RIK2,CK):- appointmentService(AK,3001),
-								appointment(AK,app_date(_,_,APPOINT_YEAR),_,_,DK),
+task03_helper_1(RIK1,RIK2,CK):- appointment(AK,app_date(_,_,APPOINT_YEAR),_,_,DK,_),
+								appointmentService(AK,3001),
 								APPOINT_YEAR >= RIK1,
 								APPOINT_YEAR =< RIK2,
 								dossier(DK,_,_,_,_,CK).
 
 %Якщо звертався за послугою зменшення ставок по кредиту
-task03_helper_2(RIK1,RIK2,CK):- appointmentService(AK,3002),
-								appointment(AK,app_date(_,_,APPOINT_YEAR),_,_,DK),
+task03_helper_2(RIK1,RIK2,CK):- appointment(AK,app_date(_,_,APPOINT_YEAR),_,_,DK,_),
+								appointmentService(AK,3002),
 								APPOINT_YEAR >= RIK1,
 								APPOINT_YEAR =< RIK2,
 								dossier(DK,_,_,_,_,CK).
@@ -174,48 +172,52 @@ task03_formatter([CLIENT_PK| REST_CLIENTS], [[NAME,SURNAME]|REST_RESULT]):- clie
 
 % Запит з сумуванням
 % Запит № 4 Середня ціна послуг
-% task04(-AMOUNT)
 task04(AMOUNT):- findall(SK,service(SK,_,_),SERVICES),
 				total_amount(SERVICES,SUMA, service_value),
 				length(SERVICES,SERVICES_AMOUNT),
 				AMOUNT is SUMA / SERVICES_AMOUNT.
 
 % Запит № 5 Середній вік клієнтів
-% task05(-AGE):
 task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
 				total_amount(AGES,TOTAL_AGE, client_age),
 				length(AGES,AGE_AMOUNT),
 				AGE is TOTAL_AGE / AGE_AMOUNT.
 
+
 % Запити з "діленням"
-%%%%%%%%%%%%%%%%%%%%Iryna%%%%%%%%%%%%%%%%%%%%%%%%
 % Запит № 6 Знайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає заданий адвоката.
+
 task06(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+
 %адвокат, що надає хоч одну ж таку послугу, що і заданий адвокат
 atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
                         lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
-                        lawyerService(LKS,SKS), lawyerService(LK,SKS),
-                        LK \= LKS, lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_).
+                        lawyerService(LKS,SKS),
+						lawyerService(LK,SKS),
+                        LK \= LKS,
+						lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_).
 
-%%%%%%%%%%%%%%%%%%%Iryna%%%%%%%%%%%%%%%%%%%%%%%%%
 % Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки
 % послуги(хоча б одну) заданого адвоката і ніякі інші.
-% task07(+LastName,+FirstName,-Lawyers):
+
 task07(LastName,FirstName,Lawyers) :-
              setof((LastNameRes,FirstNameRes),
              onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+
 % адвокат, що надає хоч одну послугу заданого адвоката і не надає жодної
 % такої послуги, яку б не надавав заданий адвокат
 onlyLServices(LastName,FirstName,LastNameRes,FirstNameRes):-
     atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
     not(badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes)).
+
 % адвокати, які надають послуги, що не надає заданий адвокат
 badLawyersOnly(LastName,FirstName,LastNameRes,FirstNameRes) :-
     lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_),
     notLServices(LastName,FirstName,ServiceCode),
     lawyerService(LK,ServiceCode).
+
 % послуги, які не надає даний адвокат
 notLServices(LastName,FirstName,ServiceCode):-
     lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
@@ -225,9 +227,14 @@ notLServices(LastName,FirstName,ServiceCode):-
 
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
 % і можуть надавати ще якісь, які не надає цей адвокат.
-% task08(+LastName,+FirstName,-Lawyers):
-task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
-onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes):- atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes), not(badLawyers(LastName,FirstName,LastNameRes,FirstNameRes)).
+
+task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
+						onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
+
+onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes):-
+						atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes),
+						not(badLawyers(LastName,FirstName,LastNameRes,FirstNameRes)).
+
 badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
                      lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
                      lawyerService(LKS,SK),
@@ -236,39 +243,62 @@ badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
 
 
 % Запит № 9 Знайти адвокатів (прізвище та ім’я), які надають в точності такі самі послуги як послуги заданого адвоката.
-% task09(+LastName,+FirstName,-Lawyers):
-task09(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
-badLawyers1(LastName,LastName2):-lawyer(LKS,pib(LastName2,_,_),_,_,_),
-lawyerService(LKS,SKS),LastName \= LastName2, lawyer(LKS1,pib(LastName,_,_),_,_,_),not(lawyerService(LKS1,SKS)).
+task09(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
+						onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
-onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes):- lawyer(LKS,pib(LastName,FirstName,_),_,_,_),!,lawyerService(LKS,SKS),!,
-lawyer(LKS2,pib(LastNameRes,FirstNameRes,_),_,_,_), LastName \= LastNameRes, lawyerService(LKS2,SKS),
-not(task09_helper(LastName,LastNameRes)), not(badLawyers1(LastName,LastNameRes)).
+badLawyers1(LastName,LastName2):-
+				lawyer(LKS,pib(LastName2,_,_),_,_,_),
+				lawyerService(LKS,SKS),
+				LastName \= LastName2,
+				lawyer(LKS1,pib(LastName,_,_),_,_,_),
+				not(lawyerService(LKS1,SKS)).
 
-task09_helper(LastName,LastName2):-lawyer(LKS,pib(LastName,_,_),_,_,_),
-lawyerService(LKS,SKS),lawyer(LKS1,pib(LastName2,_,_),_,_,_),not(lawyerService(LKS1,SKS)).
+onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes):-
+					lawyer(LKS,pib(LastName,FirstName,_),_,_,_),!,
+					lawyerService(LKS,SKS),
+					lawyer(LKS2,pib(LastNameRes,FirstNameRes,_),_,_,_),
+					LastName \= LastNameRes,
+					lawyerService(LKS2,SKS),
+					not(task09_helper(LastName,LastNameRes)),
+					not(badLawyers1(LastName,LastNameRes)).
 
-% оператори
+task09_helper(LastName,LastName2):-
+				lawyer(LKS,pib(LastName,_,_),_,_,_),
+				lawyerService(LKS,SKS),
+				lawyer(LKS1,pib(LastName2,_,_),_,_,_),
+				not(lawyerService(LKS1,SKS)).
+
+
 % записаний_на
+:-op(200,yfx,is_registered_on).
+is_registered_on(Client,Service):-
+						client(CId,pib(Client,_,_),_,_,_),
+						dossier(DId,_,_,_,_,CId),
+						appointment(AId,_,_,_,DId,_),
+						service(SId,Service,_),
+						appointmentService(AId,SId),!.
 
-% :-op(1000,xfx,is_registered_on).
-:-op(100,yfx,is_registered_on).
-is_registered_on(Client,Service):-client(CId,pib(Client,_,_),_,_,_),dossier(DId,_,_,_,_,CId),
-appointment(AId,_,_,_,DId),service(SId,Service,_),appointmentService(AId,SId),!. % yaskova is_registered_on "відстрочення виплати кредиту".
+
 % надає_адвокат
+:-op(300,xfy,is_provided_by).
+is_provided_by(Service,Lawyer):-
+				service(SId,Service,_),
+				lawyer(LId, Lawyer,_,_,_),
+				lawyerService(LId,SId),!.
 
-% :-op(900,xfx,is_provided_by).
-:-op(900,xfy,is_provided_by).
-is_provided_by(Service,Lawyer):-service(SId,Service,_),lawyer(LId, pib(Lawyer,_,_),_,_,_),lawyerService(LId,SId),!. % "відстрочення виплати кредиту" is_provided_by kachan.
 
 Clients is_registered_on Service is_provided_by Lawyer:-setof(Client,helperOp(Client,Service,Lawyer),Clients).
 helperOp(Client,Service,Lawyer):-
-client(CId,pib(Client,_,_),_,_,_),dossier(DId,_,_,_,_,CId),lawyer(LId, pib(Lawyer,_,_),_,_,_),
-appointment(AId,_,_,LId,DId),service(SId,Service,_),appointmentService(AId,SId).
+				client(CId,Client,_,_,_),
+				dossier(DId,_,_,_,_,CId),
+				lawyer(LId, Lawyer,_,_,_),
+				appointment(AId,_,_,LId,DId,_),
+				service(SId,Service,_),
+				appointmentService(AId,SId).
 
-% Who is_registered_on "відстрочення виплати кредиту" is_provided_by ignatenko.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1 Запит
 :- write("Запит 1 ."), writeln("Порахувати прибуток бюро за 2018 за відстрочення виплати кредиту").
 :- writeln("Бажаний результат:   3400").
@@ -296,27 +326,28 @@ appointment(AId,_,_,LId,DId),service(SId,Service,_),appointmentService(AId,SId).
 :- task05(R), write("Отримали: \t\t\t"),writeln(R), nl.
 
 % 6 Запит
-:- write("Запит 6:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає заданий адвоката. ").
+:- write("Запит 6:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає kostiantyn gudko. ").
 :- writeln("Бажаний результат: [(gurin,vladyslav),(ignatenko,igor),(kachan,artem),(savruk,solomiya)]").
 :- task06(gudko,kostiantyn,R), write("Отримали: \t\t\t"),writeln(R), nl.
 
 % 7 Запит
-:- write("Запит 7:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають тільки послуги заданого адвоката і ніякі інші.").
+:- write("Запит 7:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають тільки послуги vladyslav gurin і ніякі інші.").
 :- writeln("Бажаний результат:  [(gudko,kostiantyn),(mytko,grigoriy),(savruk,solomiya)]").
 :- task07(gurin,vladyslav,R), write("Отримали: \t\t\t"),writeln(R), nl.
 
 % 8 Запит
-:- write("Запит 8:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,"),
+:- write("Запит 8:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги grigoriy mytko,"),
 	writeln("і можуть надавати ще якісь, які не надає цей адвокат.").
 :- writeln("Бажаний результат: (gurin, vladyslav),  (shulga, mykhailo)").
 :- task08(mytko,grigoriy,R), write("Отримали: \t\t\t"),writeln(R), nl.
 
 % 9 Запит
-:- write("Запит 9:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають в точності такі самі послуги як послуги заданого адвоката.").
+:- write("Запит 9:"), writeln("\nЗнайти адвокатів (прізвище та ім’я), які надають в точності такі самі послуги як послуги solomiya savruk.").
 :- writeln("Бажаний результат:  [(gudko,kostiantyn)]").
 :- task09(savruk,solomiya,R), write("Отримали: \t\t\t"),writeln(R), nl.
 
+
 % Оператори
 :- write("Оператори:"), writeln("\nWho is_registered_on \"відстрочення виплати кредиту\" is_provided_by ignatenko.").
-:- writeln("Бажаний результат:  [yaskova]").
-:- Who is_registered_on "відстрочення виплати кредиту" is_provided_by ignatenko, write("Отримали: \t\t\t"),writeln(Who), nl.
+:- writeln("Бажаний результат:  [pib(yaskova,yana,oleksandrivna)]").
+:- Who is_registered_on "відстрочення виплати кредиту" is_provided_by pib(ignatenko,igor,oleksandrovych), write("Отримали: \t\t\t"),writeln(Who), nl.
