@@ -126,8 +126,10 @@ total_amount([KEY|Rest],Suma,AMOUNT_FUNCTION):- call(AMOUNT_FUNCTION,KEY,CURRENT
 % Порахувати прибуток бюро за вказаний рік за вказану послугу(у записах є дата, записи пов'язані з послугами, у послуг є дата)
 % task01(+Year,+ServiceName,-Total)
 task01(Year,ServiceName,Total):-get_total_apps(Year,ServiceCode,TotalApps), service(ServiceCode,ServiceName,Price), Total is TotalApps*Price.
+
 % Загальна кількість записів на задану послугу за конкретний рік
 get_total_apps(Year,ServiceCode,Total):-findall(ApK,getApps(Year,ServiceCode,ApK),ListApKs), length(ListApKs,Total).
+
 % Повертає true, якщо існує запис, що відбувся в конкретному році на задану послугу.
 getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,_), appointmentService(ApK, ServiceCode).
 
@@ -143,7 +145,6 @@ get_total_cases(Year,LayerCode,Total):-setof(DCode,getCases(Year,LayerCode,DCode
 getCases(Year,LCode,DCode):-appointment(_,app_date(_,_,YearA),_,LCode,DCode), YearA >= Year, dossier(DCode,_,_,_,_,_).
 
 % Запит № 3
-%%%%%%%%%%%%%%%%%%%%Kostyantyn%%%%%%%%%%%%%%%%%%%%%%%%
 % Знайти клієнтів, які в період з РІК1 по РІК2 звертались за послугою з відстрочення виплати кредиту
 % та ніколи не звертались за послугою зменшення ставок по кредиту
 % task03(+RIK1,+RIK2,-CLIENTS)
@@ -164,10 +165,13 @@ task03_helper_2(RIK1,RIK2,CK):- appointmentService(AK,3002),
 
 task03_helper_full(RIK1,RIK2,CK):- task03_helper_1(RIK1,RIK2,CK),not(task03_helper_2(RIK1,RIK2,CK)).
 
-task03(RIK1,RIK2,CLIENTS):- findall(CK,task03_helper_full(RIK1,RIK2,CK),CLIENTS),!.
+task03(RIK1,RIK2,CLIENTS):- setof(CK,task03_helper_full(RIK1,RIK2,CK),CLIENTS),!.
+
+%Повертає прізвища та ім'я клієнтів, за їх кодом
+task03_formatter([], []):-!.
+task03_formatter([CLIENT_PK| REST_CLIENTS], [[NAME,SURNAME]|REST_RESULT]):- client(CLIENT_PK, pib(NAME, SURNAME, _), _, _, _), task03_formatter(REST_CLIENTS,REST_RESULT).
 
 % Запит з сумуванням
-%%%%%%%%%%%%%%%%%%%%Kostyantyn%%%%%%%%%%%%%%%%%%%%%%%%
 % Запит № 4 Середня ціна послуг
 % task04(-AMOUNT)
 task04(AMOUNT):- findall(SK,service(SK,_,_),SERVICES),
@@ -175,7 +179,6 @@ task04(AMOUNT):- findall(SK,service(SK,_,_),SERVICES),
 				length(SERVICES,SERVICES_AMOUNT),
 				AMOUNT is SUMA / SERVICES_AMOUNT.
 
-%%%%%%%%%%%%%%%%%%%%Kostyantyn%%%%%%%%%%%%%%%%%%%%%%%%
 % Запит № 5 Середній вік клієнтів
 % task05(-AGE):
 task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
@@ -266,9 +269,9 @@ appointment(AId,_,_,LId,DId),service(SId,Service,_),appointmentService(AId,SId).
 % Who is_registered_on "відстрочення виплати кредиту" is_provided_by ignatenko.  
 
 % 1 Запит
-:- write("Запит 1:"), writeln("\nПорахувати прибуток бюро за вказаний рік за вказану послугу(у записах є дата, записи пов'язані з послугами, у послуг є дата)").
+:- write("Запит 1 ."), writeln("Порахувати прибуток бюро за 2018 за відстрочення виплати кредиту").
 :- writeln("Бажаний результат:   3400").
-:- task01(2018,"відстрочення виплати кредиту",R), write("Отримали: \t\t    "),writeln(R), nl.
+:- task01(2018,"відстрочення виплати кредиту",R), write("Отримали: \t\t      "),writeln(R), nl.
 
 % 2 Запит
 :- write("Запит 2:"), writeln("\nДля кожного адвоката порахувати кількість записів клієнтів до нього, які були здійснені протягом останніх двох років.").
@@ -278,8 +281,8 @@ appointment(AId,_,_,LId,DId),service(SId,Service,_),appointmentService(AId,SId).
 % 3 Запит
 :- write("Запит 3:"), writeln("\nЗнайти клієнтів, які в період з 2017 по 2018 звертались за послугою з відстрочення виплати кредиту"),
 	writeln("та ніколи не звертались за послугою зменшення ставок по кредиту").
-:- writeln("Бажаний результат:   [102,101,101]").
-:- task03(2017,2018,R), write("Отримали: \t\t    "),writeln(R), nl.
+:- writeln("Бажаний результат:  [[avramenko,volodymir],[yaskova,yana]]").
+:- task03(2017,2018,R1), task03_formatter(R1,R), write("Отримали: \t\t     "),writeln(R), nl.
 
 % 4 Запит
 :- write("Запит 4:"), writeln("\nСередня ціна послуг").
