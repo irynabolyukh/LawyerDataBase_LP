@@ -226,6 +226,25 @@ badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
 
 
 % оператори
+:-op(300,yfx,записаний_на).
+записаний_на(Client, Service):- client(C_PK, Client,_,_,_),
+								dossier(D_PK,_,_,_,_,C_PK),
+								service(S_PK,Service,_),
+								appointmentService(A_PK, S_PK),
+								appointment(A_PK,_,_,_,D_PK).
+								
+записаний_на(Client,Service надає_адвокат Lawyer):- 
+								client(C_PK, Client,_,_,_),
+								dossier(D_PK,_,_,_,_,C_PK),
+								service(S_PK,Service,_),
+								appointmentService(A_PK, S_PK),
+								appointment(A_PK,_,_,L_PK,D_PK),
+								lawyer(L_PK, Lawyer,_,_,_),
+								lawyerService(L_PK, S_PK).
+:-op(200,xfy,надає_адвокат).
+надає_адвокат(Service, Lawyer):- service(S_PK,Service,_),
+								lawyerService(L_PK, S_PK),
+								lawyer(L_PK, Lawyer,_,_,_).
 % записаний_на
 % надає_адвокат
 
