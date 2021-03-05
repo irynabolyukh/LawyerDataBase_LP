@@ -9,9 +9,9 @@ client(103, pib(kryukova, nina, ivanovna), birthday(25,feb,2000), address(kyiv,t
 lawyer(201, pib(ignatenko,igor,oleksandrovych),"уголовні справи",[0957655414,0502747192],[pn,vt,cht,pt]).
 lawyer(202, pib(gurin,vladyslav,olegovych),"адміністративні справи",[0976543421],[pn,sr,pt]).
 lawyer(203, pib(mytko,grigoriy,vladyslavovych),"IT, аутсорсінг",[0956644511,0675312322],[vt,cht,sb]).
-lawyer(204, pib(shulga,mykhailo,mykolayovych),"громадянські справи",[09523464211,0677658852],[vt,cht,sb]).
+lawyer(204, pib(shulga,mykhailo,mykolayovych),"громадянські справи",[0952344211,0677658852],[vt,cht,sb]).
 lawyer(205, pib(kachan,artem,petrovych),"уголовні справи",[0956546426],[vt,cht,sb]).
-lawyer(206, pib(gudko,kostiantyn,maksymovych),"налогові суперечки",[0673336611],[vt,cht,sb]).
+lawyer(206, pib(gudko,kostiantyn,maksymovych),"налогові суперечки",[067333661],[vt,cht,sb]).
 lawyer(207, pib(savruk,solomiya,yaroslavivna),"ІТ, аутсорсінг",[0678836611],[pn,vt,pt,sb]).
 
 
@@ -91,10 +91,10 @@ lawyerService(207,3001).
 lawyerService(207,3002).
 
 
-% позначає зв'язок, для зручного користування
+% позначає зв'язок м до н Запис - Послуга, для зручного користування
 appointmentService(AK, SK) :- appointment(AK,_,_,_,_,SERVICES), member(SK, SERVICES), !.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Додаткові предикати%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Додаткові предикати%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Отримати теперешній рік
 year(Year) :-
@@ -171,8 +171,6 @@ getCases(Year,LCode,DCode):-appointment(_,app_date(_,_,YearA),_,LCode,DCode,_), 
 % Знайти клієнтів, які в період з РІК1 по РІК2 звертались за послугою з відстрочення виплати кредиту
 % та ніколи не звертались за послугою зменшення ставок по кредиту
 
-
-
 %Повертає true, якщо клієнт звертався за послугою з відстрочення виплати кредиту в період з РІК1 по РІК2
 task03_helper_1(RIK1,RIK2,CK):- appointment(AK,app_date(_,_,APPOINT_YEAR),_,_,DK,_),
 								appointmentService(AK,3001),
@@ -189,6 +187,7 @@ task03_helper_2(RIK1,RIK2,CK):- appointment(AK,app_date(_,_,APPOINT_YEAR),_,_,DK
 
 task03_helper_full(RIK1,RIK2,CK):- task03_helper_1(RIK1,RIK2,CK),not(task03_helper_2(RIK1,RIK2,CK)).
 
+%task03(+RIK1,+RIK2,-CLIENTS) - Лише один варіант предикату
 task03(RIK1,RIK2,CLIENTS):- setof(CK,task03_helper_full(RIK1,RIK2,CK),CLIENTS),!.
 
 %Повертає прізвища та ім'я клієнтів, за їх кодом
@@ -197,12 +196,14 @@ task03_formatter([CLIENT_PK| REST_CLIENTS], [[NAME,SURNAME]|REST_RESULT]):- clie
 
 % Запит з сумуванням
 % Запит № 4 Середня ціна послуг
+%task04(-AMOUNT) - Лише один варіант предикату
 task04(AMOUNT):- findall(SK,service(SK,_,_),SERVICES),
 				total_amount(SERVICES,SUMA, service_value),
 				length(SERVICES,SERVICES_AMOUNT),
 				AMOUNT is SUMA / SERVICES_AMOUNT.
 
 % Запит № 5 Середній вік клієнтів
+%task05(-AGE) - Лише один варіант предикату
 task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
 				total_amount(AGES,TOTAL_AGE, client_age),
 				length(AGES,AGE_AMOUNT),
@@ -273,6 +274,7 @@ notLServices(LastName,FirstName,ServiceCode):-
 % якісь, які не надає цей адвокат:
 % LastName = gudko,FirstName = kostiantyn,R = [(gurin, vladyslav), (savruk, solomiya)] ;
 % LastName = ignatenko,FirstName = igor,R = [(kachan, artem)] ; і так далі
+
 task08(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
                                      onlyServicesSet(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
@@ -336,7 +338,9 @@ is_provided_by(Service,Lawyer):-
 				lawyerService(LId,SId),!.
 
 
-Clients is_registered_on Service is_provided_by Lawyer:-setof(Client,helperOp(Client,Service,Lawyer),Clients).
+Clients is_registered_on Service is_provided_by Lawyer:-
+				setof(Client,helperOp(Client,Service,Lawyer),Clients).
+				
 helperOp(Client,Service,Lawyer):-
 				client(CId,Client,_,_,_),
 				dossier(DId,_,_,_,_,CId),
@@ -396,6 +400,6 @@ helperOp(Client,Service,Lawyer):-
 
 
 % Оператори
-:- write("Оператори:"), writeln("\nWho is_registered_on \"відстрочення виплати кредиту\" is_provided_by ignatenko.").
+:- write("Оператори:"), writeln("\nWho is_registered_on \"відстрочення виплати кредиту\" is_provided_by pib(ignatenko,igor,oleksandrovych).").
 :- writeln("Бажаний результат:  [pib(yaskova,yana,oleksandrivna)]").
 :- Who is_registered_on "відстрочення виплати кредиту" is_provided_by pib(ignatenko,igor,oleksandrovych), write("Отримали: \t\t\t"),writeln(Who), nl.
