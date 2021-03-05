@@ -330,6 +330,7 @@ task09_helper(LastName,LastName2):-
 % послуги на які вони були записані:
 % Client = petrenko, Service = "написання позовної заяви" ;
 % Client = petrenko, Service = "стягнення моральної та матеріальної шкоди" ; і так далі
+
 :-op(200,yfx,is_registered_on).
 % клієнти та послуги на які вони записані:
 is_registered_on(Client,Service):-
@@ -347,24 +348,24 @@ is_registered_on(Client,Service):-
 % адвокатів, які надавали ці послуги:
 % Service = "відстрочення виплати кредиту",Lawyer = pib(ignatenko, igor, oleksandrovych) ;
 % Service = "відстрочення виплати кредиту",Lawyer = pib(gurin, vladyslav, olegovych) ; і так далі
+
 :-op(300,xfy,is_provided_by).
-% послуги та адвокати які надають ці послуги:
+% послуги та адвокати, які надають ці послуги:
 is_provided_by(Service,Lawyer):-
 				service(SId,Service,_),
 				lawyer(LId, Lawyer,_,_,_),
 				lawyerService(LId,SId).
 
 
-Clients is_registered_on Service is_provided_by Lawyer:-
-				setof(Client,helperOp(Client,Service,Lawyer),Clients).
-				
-helperOp(Client,Service,Lawyer):-
+Client is_registered_on Service is_provided_by Lawyer:-
 				client(CId,Client,_,_,_),
 				dossier(DId,_,_,_,_,CId),
 				lawyer(LId, Lawyer,_,_,_),
 				appointment(AId,_,_,LId,DId,_),
 				service(SId,Service,_),
 				appointmentService(AId,SId).
+				
+				
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,4 +420,4 @@ helperOp(Client,Service,Lawyer):-
 % Оператори
 :- write("Оператори:"), writeln("\nWho is_registered_on \"відстрочення виплати кредиту\" is_provided_by pib(ignatenko,igor,oleksandrovych).").
 :- writeln("Бажаний результат:  [pib(yaskova,yana,oleksandrivna)]").
-:- Who is_registered_on "відстрочення виплати кредиту" is_provided_by pib(ignatenko,igor,oleksandrovych), write("Отримали: \t\t\t"),writeln(Who), nl.
+:- setof(Who, Who is_registered_on "відстрочення виплати кредиту" is_provided_by pib(ignatenko,igor,oleksandrovych), R), write("Отримали: \t\t\t"),writeln(R), nl.
