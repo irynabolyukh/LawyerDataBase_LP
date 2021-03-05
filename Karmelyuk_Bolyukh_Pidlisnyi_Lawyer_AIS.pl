@@ -14,7 +14,6 @@ lawyer(205, pib(kachan,artem,petrovych),"уголовні справи",[0956546
 lawyer(206, pib(gudko,kostiantyn,maksymovych),"налогові суперечки",[067333661],[vt,cht,sb]).
 lawyer(207, pib(savruk,solomiya,yaroslavivna),"ІТ, аутсорсінг",[0678836611],[pn,vt,pt,sb]).
 
-
 % послуга(Код послуги, Назва Послуги, Ціна)
 service(3001,"відстрочення виплати кредиту",1700).
 service(3002,"зменшення ставок по кредиту",1200).
@@ -78,7 +77,6 @@ lawyerService(203,3004).
 lawyerService(204,3003).
 lawyerService(204,3004).
 lawyerService(204,3005).
-
 
 lawyerService(205,3001).
 lawyerService(205,3004).
@@ -154,11 +152,11 @@ getApps(Year,ServiceCode,ApK):-appointment(ApK,app_date(_,_,Year),_,_,DK,_),
                                appointmentService(ApK, ServiceCode).
 
 
-
 % Запит № 2
 % Для кожного адвоката порахувати кількість справ за останні два роки.
-%task02(-Pairs)
+%task02(-Pairs) - Лише один варіант предикату
 task02(Pairs):-findall((LastName,Total),task02_helper(LastName, Total),Pairs).
+
 task02_helper(LastName,Total):-lawyer(IdL,pib(LastName,_,_),_,_,_),year(CurrYear), LastTwo is CurrYear - 2,get_total_cases(LastTwo,IdL,Total).
 
 % Загальна кількість справ до заданого адвоката з датами проведення запису більшою або рівною за задану
@@ -210,7 +208,6 @@ task05(AGE):- findall(CK,client(CK,_,_,_,_),AGES),
 				AGE is TOTAL_AGE / AGE_AMOUNT.
 
 
-
 % Запити з "діленням"
 % Запит № 6 Знайти адвокатів (прізвище та ім’я), які надають хоч одну послугу, з тих які надає заданий адвоката.
 % предикат task06(?LastName,?FirstName,?Lawyers). буде працювати з
@@ -230,7 +227,6 @@ atLeastOne(LastName,FirstName,LastNameRes,FirstNameRes):-
 						lawyerService(LK,SKS),
                         LK \= LKS,
 						lawyer(LK,pib(LastNameRes,FirstNameRes,_),_,_,_).
-
 
 
 % Запит № 7 Знайти адвокатів (прізвище та ім’я), які надають тільки
@@ -263,7 +259,6 @@ notLServices(LastName,FirstName,ServiceCode):-
     not(lawyerService(LKS,ServiceCode)).
 
 
-
 % Запит № 8 Знайти адвокатів (прізвище та ім’я), які надають усі ті послуги, що і послуги заданого адвоката,
 % і можуть надавати ще якісь, які не надає цей адвокат.
 % предикат task08(?LastName,?FirstName,?Lawyers). буде працювати з
@@ -293,10 +288,17 @@ badLawyers(LastName,FirstName,LastNameRes,FirstNameRes):-
 
 
 % Запит № 9 Знайти адвокатів (прізвище та ім’я), які надають в точності такі самі послуги як послуги заданого адвоката.
-
+% предикат task09(?LastName,?FirstName,?Lawyers). буде працювати з
+% будь-якими типами параметрів.
+% для прикладу, запит task09(LastName,FirstName,R). виведе імена та
+% прізвища усіх адвокатів разом зі спиками тих адвокатів, що
+% надаютьв точності такі самі послуги як, що і виведений адвокат:
+% LastName = gudko, FirstName = kostiantyn, R = [(savruk, solomiya)] ;
+% LastName = ignatenko, FirstName = igor, R = [(kachan, artem)] ; і так далі
 task09(LastName,FirstName,Lawyers):- setof((LastNameRes,FirstNameRes),
 						onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes),Lawyers).
 
+% адвокати, що не надають послуги, які надає заданий адвокат
 badLawyers1(LastName,LastName2):-
 				lawyer(LKS,pib(LastName2,_,_),_,_,_),
 				lawyerService(LKS,SKS),
@@ -304,8 +306,9 @@ badLawyers1(LastName,LastName2):-
 				lawyer(LKS1,pib(LastName,_,_),_,_,_),
 				not(lawyerService(LKS1,SKS)).
 
+% адвокати,що надають в точності такі самі послуги, що і заданий адвокат
 onlyServicesSet1(LastName,FirstName,LastNameRes,FirstNameRes):-
-					lawyer(LKS,pib(LastName,FirstName,_),_,_,_),!,
+					lawyer(LKS,pib(LastName,FirstName,_),_,_,_),
 					lawyerService(LKS,SKS),
 					lawyer(LKS2,pib(LastNameRes,FirstNameRes,_),_,_,_),
 					LastName \= LastNameRes,
@@ -321,21 +324,35 @@ task09_helper(LastName,LastName2):-
 
 
 % записаний_на
+% is_registered_on(?Client,?Service). буде працювати з
+% будь-якими типами параметрів.
+% для прикладу, запит is_registered_on(Client,Service). виведе клієнтів та
+% послуги на які вони були записані:
+% Client = petrenko, Service = "написання позовної заяви" ;
+% Client = petrenko, Service = "стягнення моральної та матеріальної шкоди" ; і так далі
 :-op(200,yfx,is_registered_on).
+% клієнти та послуги на які вони записані:
 is_registered_on(Client,Service):-
 						client(CId,pib(Client,_,_),_,_,_),
 						dossier(DId,_,_,_,_,CId),
 						appointment(AId,_,_,_,DId,_),
 						service(SId,Service,_),
-						appointmentService(AId,SId),!.
+						appointmentService(AId,SId).
 
 
 % надає_адвокат
+% is_provided_by(?Service,?Lawyer). буде працювати з
+% будь-якими типами параметрів.
+% для прикладу, запит is_provided_by(Service,Lawyer). виведе послуги та
+% адвокатів, які надавали ці послуги:
+% Service = "відстрочення виплати кредиту",Lawyer = pib(ignatenko, igor, oleksandrovych) ;
+% Service = "відстрочення виплати кредиту",Lawyer = pib(gurin, vladyslav, olegovych) ; і так далі
 :-op(300,xfy,is_provided_by).
+% послуги та адвокати які надають ці послуги:
 is_provided_by(Service,Lawyer):-
 				service(SId,Service,_),
 				lawyer(LId, Lawyer,_,_,_),
-				lawyerService(LId,SId),!.
+				lawyerService(LId,SId).
 
 
 Clients is_registered_on Service is_provided_by Lawyer:-
